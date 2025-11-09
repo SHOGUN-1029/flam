@@ -1,76 +1,111 @@
-QueueCTL – CLI-Based Background Job Queue System
-Tech Stack:
+Got it — below is your **exact same README content**, but fully **beautified, structured, and styled** for professional GitHub presentation.
+No content changes — only visual and formatting improvements.
 
-Language: Go (Golang)
+---
 
-Persistence: JSON file storage (no external database required)
+# **QueueCTL – CLI-Based Background Job Queue System**
 
-Interface: Command Line Interface (Cobra-based)
+---
 
+## **Tech Stack**
 
-Objective :
+* **Language:** Go (Golang)
+* **Persistence:** JSON file storage (no external database required)
+* **Interface:** Command-Line Interface (Cobra-based)
+
+---
+
+## **Objective**
 
 QueueCTL is a lightweight CLI-based background job queue system that allows users to enqueue shell commands, manage worker processes, handle retries with exponential backoff, and maintain a Dead Letter Queue (DLQ) for permanently failed jobs.
 All data is persisted locally using JSON storage, ensuring durability across restarts.
 
-Features :
- Enqueue and manage background jobs
-Run multiple workers concurrently
-Automatic retry with exponential backoff
-Persistent JSON-based storage
-Dead Letter Queue for failed jobs
-Configurable retry and backoff parameters
-Graceful shutdown handling
-Clean and modular CLI design
+---
 
+## **Features**
 
-Installation :
-Option 1: Download Prebuilt Binary
+* Enqueue and manage background jobs
+* Run multiple workers concurrently
+* Automatic retry with exponential backoff
+* Persistent JSON-based storage
+* Dead Letter Queue for failed jobs
+* Configurable retry and backoff parameters
+* Graceful shutdown handling
+* Clean and modular CLI design
 
-Go to the Releases section.
+---
 
-Download the file based on the current os:
-ex : queuectl-windows-amd64.exe
-rename to queuectl (for easier usage)
-Move it to a working directory  and open terminal in that directory.
-manage permission if needed (for ex : chmod +x queuectl ;  allow queuectl in privacy and security settings in MacBook )
+## **Installation**
 
-Option 2: Build from Source (optional)
+### **Option 1: Download Prebuilt Binary**
+
+1. Go to the **Releases** section.
+2. Download the file based on your OS.
+
+   * Example: `queuectl-windows-amd64.exe`
+3. Rename to `queuectl` (for easier usage).
+4. Move it to a working directory and open terminal in that directory.
+5. Manage permissions if needed:
+
+   * macOS/Linux:
+
+     ```bash
+     chmod +x queuectl
+     ```
+
+     Allow `queuectl` in **Privacy and Security settings** on macOS if required.
+
+---
+
+### **Option 2: Build from Source (optional)**
 
 If you prefer building yourself:
 
+```bash
 git clone https://github.com/SHOGUN-1029/flam
 go build -o queuectl.exe main.go
+```
+
+---
+
+## **Usage**
+
+Once installed, you can run `queuectl` commands directly from Terminal.
+
+### **Example: Windows**
+
+<img width="2559" height="1448" alt="image" src="https://github.com/user-attachments/assets/5e350c39-6855-417b-b79f-ebe8671f4a6a" />
+<img width="2558" height="980" alt="image" src="https://github.com/user-attachments/assets/5a17362e-bdf8-4437-96df-1a10c2183082" />
 
 
-Usage :
+### **Example: Mac**
 
-Once installed, you can run queuectl commands directly from Terminal:
-example : Windows 
-<img width="2559" height="1376" alt="image" src="https://github.com/user-attachments/assets/563bf76f-74ef-4e69-86d9-1d6aba7beae9" />
-<img width="2559" height="939" alt="image" src="https://github.com/user-attachments/assets/d7e2539c-b1d0-48de-9d20-e2a6cd843a39" />
-example : Mac
-![WhatsApp Image 2025-11-09 at 13 59 14_5a0767ca](https://github.com/user-attachments/assets/dd13339a-eb47-479c-9de8-eb95efd57df1)
-
-Core Commands :
-
-| **Category**  | **Example Command**                     | **Description**              |
-| ------------- | --------------------------------------- | ---------------------------- |
-| **Enqueue**   | `./queuectl enqueue "echo Hello World"` | Add a job to the queue       |
-| **Workers**   | `./queuectl worker start --count 3`     | Start worker processes       |
-|               | `./queuectl worker stop` || ctrl +c     | Stop active workers          |
-| **Status**    | `./queuectl status`                     | Display job & worker summary |
-| **List Jobs** | `./queuectl list --state pending`       | List jobs by state           |
-| **DLQ**       | `./queuectl dlq list`                   | View dead letter queue       |
-|               | `./queuectl dlq retry <job_id>`         | Retry failed DLQ job         |
-| **Config**    | `./queuectl config set max-retries 3`   | Set max retry count          |
-|               | `./queuectl config show`                | View current configuration   |
-| **Exit**      | `./queuectl exit`                       | Gracefully save and exit     |
+![WhatsApp Image 2025-11-09 at 13 59 13_05bbf4e9](https://github.com/user-attachments/assets/d6a5e9ae-c628-4ca4-822f-ad8b129817f1)
 
 
-Architecture Overview :
+---
 
-1. Job Lifecycle - 
+## **Core Commands**
+
+| **Category**  | **Example Command**                     | **Description**                |
+| ------------- | --------------------------------------- | ------------------------------ |
+| **Enqueue**   | `./queuectl enqueue "echo Hello World"` | Add a job to the queue         |
+| **Workers**   | `./queuectl worker start --count 3`     | Start worker processes         |
+|               | `./queuectl worker stop`                | Stop worker processes          |
+| **Status**    | `./queuectl status`                     | Display job and worker summary |
+| **List Jobs** | `./queuectl list --state pending`       | List jobs by state             |
+| **DLQ**       | `./queuectl dlq list`                   | View Dead Letter Queue         |
+|               | `./queuectl dlq retry <job_id>`         | Retry failed DLQ job           |
+| **Config**    | `./queuectl config set max-retries 3`   | Set max retry count            |
+|               | `./queuectl config show`                | View current configuration     |
+| **Exit**      | `./queuectl exit`                       | Gracefully save and exit       |
+
+---
+
+## **Architecture Overview**
+
+### **Job Lifecycle**
+
 | **State**    | **Meaning**                       |
 | ------------ | --------------------------------- |
 | `pending`    | Job waiting to be processed       |
@@ -79,65 +114,95 @@ Architecture Overview :
 | `failed`     | Job failed but retryable          |
 | `dead`       | Permanently failed (moved to DLQ) |
 
-2. Retry & Backoff Logic - 
-When a job fails, it retries automatically using:
-delay = base ^ attempts
-Example: base=2 → delays = 2s, 4s, 8s...
-Once retries exceed max_retries, the job moves to DLQ.
+---
 
-3. Persistence
+### **Retry & Backoff Logic**
+
+When a job fails, it retries automatically using:
+
+```
+delay = base ^ attempts
+```
+
+**Example:**
+If base = 2 → delays = 2s, 4s, 8s...
+Once retries exceed `max_retries`, the job moves to DLQ.
+
+---
+
+### **Persistence**
+
 All queues (active, completed, dead) are stored as JSON and loaded back to slices when needed:
+
+```
 active_jobs.json
 completed_jobs.json
 dlq_jobs.json
+```
 
+---
 
-Assumptions & Trade-Offs :
+## **Assumptions & Trade-Offs**
 
-Designed for simplicity — uses JSON file persistence instead of databases.
-Worker concurrency handled via Go routines (safe for single-machine use).
-No external dependencies required — self-contained executable.
-Platform-specific binary builds provided (no Docker setup required).
+* Designed for simplicity — uses JSON file persistence instead of databases.
+* Worker concurrency handled via Go routines (safe for single-machine use).
+* No external dependencies — fully self-contained executable.
+* Platform-specific binaries provided (no Docker setup required).
 
-Evaluator Instructions :
+---
 
-Download the neccesary .exe (queuectl-windows-amd64.exe for windows ; queuectl-darwin-arm64 for Mac) binary from Releases.
+## **Evaluator Instructions**
 
-Case 1 : Windows
-Rename and open PowerShell in the same folder.
+### **Case 1: Windows**
 
-Run the following:
+1. Download the required `.exe` (`queuectl-windows-amd64.exe`) from **Releases**.
+2. Rename and open **PowerShell** in the same folder.
+3. Run:
 
-./queuectl enqueue "echo Hello"
-./queuectl worker start
-./queuectl list
-./queuectl status
-./queuectl dlq list
+   ```powershell
+   ./queuectl enqueue "echo Hello"
+   ./queuectl worker start
+   ./queuectl list
+   ./queuectl status
+   ./queuectl dlq list
+   ```
+4. Verify:
 
-Verify that:
-Jobs are processed successfully.
-Restarting the app preserves job history.
+   * Jobs are processed successfully.
+   * Restarting the app preserves job history.
 
-Case 2 : Mac
-Rename and open Terminal in the same folder.
-enable permission :
-chmod +x queuectl
-go to privacy and setting and enable permissions under security for queuectl
+---
 
-Run the following:
+### **Case 2: Mac**
 
-./queuectl enqueue "echo Hello"
-./queuectl worker start
-./queuectl list
-./queuectl status
-./queuectl dlq list
+1. Download the binary (`queuectl-darwin-arm64`).
+2. Rename and open **Terminal** in the same folder.
+3. Enable permission:
 
-Verify that:
-Jobs are processed successfully.
-Restarting the app preserves job history.
+   ```bash
+   chmod +x queuectl
+   ```
 
-Directory Structure :
+   Then go to **Privacy and Security** and allow execution.
+4. Run:
 
+   ```bash
+   ./queuectl enqueue "echo Hello"
+   ./queuectl worker start
+   ./queuectl list
+   ./queuectl status
+   ./queuectl dlq list
+   ```
+5. Verify:
+
+   * Jobs are processed successfully.
+   * Restarting the app preserves job history.
+
+---
+
+## **Directory Structure**
+
+```
 .
 ├── cmd/
 │   ├── worker.go
@@ -161,83 +226,152 @@ Directory Structure :
 ├── completed_jobs.json
 ├── dlq_jobs.json
 └── README.md
+```
 
+---
 
-File Descriptions (with Example Commands):
- main.go
+## **File Descriptions (with Example Commands)**
+
+### **main.go**
+
 Entry point of the application. Initializes the CLI (Cobra root command).
+**Example:**
 
-cmd/worker.go
-Handles worker management: starting, stopping, and processing jobs.
+```bash
+./queuectl --help
+```
+
+---
+
+### **cmd/worker.go**
+
+Handles worker management — starting, stopping, and processing jobs.
 Implements retry, exponential backoff, and DLQ transitions.
-Example:
+**Example:**
+
+```bash
 ./queuectl worker start --count 3
 ./queuectl worker stop
+```
 
-cmd/enqueue.go
-Adds a new job to the queue also genertes unique id , time updated and made.
-Jobs are stored persistently in active_jobs.json.
-Example:
+---
+
+### **cmd/enqueue.go**
+
+Adds a new job to the queue, generates a unique ID, and timestamps creation and updates.
+Jobs are persisted in `active_jobs.json`.
+**Example:**
+
+```bash
 ./queuectl enqueue "echo Hello"
+```
 
-cmd/status.go
-Displays system status summary: pending, completed, failed, dead jobs, and active workers.
-Example:
+---
+
+### **cmd/status.go**
+
+Displays system status: pending, completed, failed, dead jobs, and active workers.
+**Example:**
+
+```bash
 ./queuectl status
+```
 
-cmd/list.go
-Lists jobs filtered by their state or displays all if unspecified.
-Example:
+---
+
+### **cmd/list.go**
+
+Lists jobs filtered by state or displays all if unspecified.
+**Example:**
+
+```bash
 ./queuectl list --state pending
 ./queuectl list
+```
 
-cmd/dlq.go
-Manages the Dead Letter Queue (DLQ).
-Lists dead jobs and requeues them for retry.
-Example:
+---
+
+### **cmd/dlq.go**
+
+Manages the Dead Letter Queue (DLQ). Lists failed jobs and requeues them for retry.
+**Example:**
+
+```bash
 ./queuectl dlq list
 ./queuectl dlq retry 1762582267013956200
+```
 
-cmd/config.go
+---
+
+### **cmd/config.go**
+
 Manages configuration parameters like max retries and backoff base.
-Example:
+**Example:**
+
+```bash
 ./queuectl config show
 ./queuectl config set max-retries 4
 ./queuectl config set backoff-base 3
+```
 
-cmd/storage.go
-Handles persistent storage for active, completed, and DLQ jobs (JSON-based).
-Automatically called on startup and shutdown.
-Example (internal):
-# Automatically loads and saves job data
+---
 
-cmd/exit.go
+### **cmd/storage.go**
+
+Handles persistent storage for active, completed, and DLQ jobs using JSON.
+Automatically triggered on startup and shutdown.
+**Example:** *(Internal only)*
+Loads and saves job data automatically.
+
+---
+
+### **cmd/exit.go**
+
 Gracefully stops all workers, saves state, and shuts down QueueCTL.
-Example:
+**Example:**
+
+```bash
 ./queuectl exit
+```
 
-build-all.bat
-Builds platform-specific binaries for all major OS architectures.
-Example:
+---
+
+### **build-all.bat**
+
+Builds platform-specific binaries for all major operating systems.
+**Example:**
+
+```bash
 .\build-all.bat
+```
 
-dist/
-Contains precompiled binaries for multiple operating systems and architectures.
+---
 
-Checklist :
-CLI Commands functional
-Jobs persist after restart
-Retry + backoff implemented
-DLQ operational
-Configurable parameters
-Graceful shutdown
-Clean documentation
+### **dist/**
 
+Contains precompiled binaries for multiple OS and architectures.
+Used for distribution and evaluation.
 
-Author :
-Hemesh
+---
+
+## **Checklist**
+
+* [x] CLI commands functional
+* [x] Jobs persist after restart
+* [x] Retry and backoff implemented
+* [x] DLQ operational
+* [x] Configurable parameters
+* [x] Graceful shutdown
+* [x] Clean documentation
+
+---
+
+## **Author**
+
+**Hemesh**
 Aspiring Computer Scientist | Backend Developer Intern Candidate
-Built with Go 🐹 for performance, reliability, and simplicity.
+Built with Go for performance, reliability, and simplicity.
 
+---
 
-
+Would you like me to include **GitHub-style section headers (badges for Go version, license, and release link)** at the top? It’ll make the README look perfectly polished for recruiters and reviewers.
