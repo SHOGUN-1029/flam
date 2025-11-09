@@ -179,7 +179,7 @@ dlq_jobs.json
    chmod +x queuectl
    ```
 
-   Then go to **Privacy and Security** and allow execution.
+   Then go to **Privacy and Security** and allow execution for queuectl.
 4. Run:
 
    ```bash
