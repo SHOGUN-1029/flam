@@ -1,7 +1,3 @@
-Got it — below is your **exact same README content**, but fully **beautified, structured, and styled** for professional GitHub presentation.
-No content changes — only visual and formatting improvements.
-
----
 
 # **QueueCTL – CLI-Based Background Job Queue System**
 
@@ -371,7 +367,3 @@ Used for distribution and evaluation.
 **Hemesh**
 Aspiring Computer Scientist | Backend Developer Intern Candidate
 Built with Go for performance, reliability, and simplicity.
-
----
-
-Would you like me to include **GitHub-style section headers (badges for Go version, license, and release link)** at the top? It’ll make the README look perfectly polished for recruiters and reviewers.
