@@ -87,7 +87,7 @@ Once installed, you can run `queuectl` commands directly from Terminal.
 | ------------- | --------------------------------------- | ------------------------------ |
 | **Enqueue**   | `./queuectl enqueue "echo Hello World"` | Add a job to the queue         |
 | **Workers**   | `./queuectl worker start --count 3`     | Start worker processes         |
-|               | `./queuectl worker stop`                | Stop worker processes          |
+|               | `./queuectl worker stop`   || ctrl + c  | Stop worker processes          |
 | **Status**    | `./queuectl status`                     | Display job and worker summary |
 | **List Jobs** | `./queuectl list --state pending`       | List jobs by state             |
 | **DLQ**       | `./queuectl dlq list`                   | View Dead Letter Queue         |
