@@ -137,86 +137,83 @@ dlq_jobs.json
 
 ---
 
-## **Concurrency and Synchronization**
+Concurrency and Synchronization
 
 QueueCTL leverages Go’s concurrency model to efficiently manage multiple background workers.
 The system is fully thread-safe and optimized for simultaneous job execution.
 
-### **1. Goroutines**
+1. Goroutines
 
 Each worker runs as an independent goroutine:
 
-```go
 go workerLoop(id)
-```
+
 
 This enables multiple jobs to be processed concurrently while maintaining high responsiveness.
-For example, if three workers are started (`--count 3`), three goroutines execute jobs in parallel.
+For example, if three workers are started (--count 3), three goroutines execute jobs in parallel.
 
-**Advantages:**
+Advantages:
 
-* Lightweight concurrency
-* Non-blocking job processing
-* Scalable parallelism across CPU cores
+Lightweight concurrency
 
----
+Non-blocking job processing
 
-### **2. Mutex Locks (`sync.Mutex`)**
+Scalable parallelism across CPU cores
 
-A global mutex (`mu`) ensures that concurrent access to shared data (job queues and JSON files) is safe and consistent:
+2. Mutex Locks (sync.Mutex)
 
-```go
+A global mutex (mu) ensures that concurrent access to shared data (job queues and JSON files) is safe and consistent:
+
 mu.Lock()
 defer mu.Unlock()
-```
 
-Locks are used during:
 
-* Adding or removing jobs from `jobQueue`
-* Updating job states
-* Saving jobs to disk
+Locks are used when:
+
+Adding or removing jobs from jobQueue
+
+Updating job states
+
+Saving jobs to disk
 
 This prevents:
 
-* Race conditions
-* Data corruption
-* Inconsistent state writes
+Race conditions
 
----
+Data corruption
 
-### **3. WaitGroups**
+Inconsistent state writes
 
-A `sync.WaitGroup` tracks active worker goroutines and waits for them to complete gracefully during shutdown:
+3. WaitGroups (sync.WaitGroup)
 
-```go
+A sync.WaitGroup tracks active worker goroutines and waits for them to complete gracefully during shutdown:
+
 wg.Add(1)
 defer wg.Done()
-```
 
-This ensures that the `queuectl exit` and `worker stop` commands will **cleanly terminate** all workers only after they finish their current tasks.
 
----
+This ensures that the queuectl exit and worker stop commands cleanly terminate all workers only after they finish their current job.
 
-### **4. Graceful Shutdown**
+4. Graceful Shutdown
 
 When users invoke:
 
-```bash
 ./queuectl exit
-```
 
-All workers receive a signal through a `stopChan` channel:
 
-```go
+All workers receive a signal through a stopChan channel:
+
 case <-stopChan:
     fmt.Printf("Worker %d stopping.\n", id)
-```
 
-This guarantees:
 
-* No job is left in an inconsistent state
-* Workers finish their in-progress jobs
-* Persistent JSON files remain accurate and up to date
+This ensures:
+
+No job is left in an inconsistent state
+
+Workers finish their in-progress jobs
+
+Persistent JSON files remain accurate and up to date
 
 ---
 
