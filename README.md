@@ -134,7 +134,98 @@ All queues (active, completed, dead) are stored as JSON and loaded back to slice
 active_jobs.json
 completed_jobs.json
 dlq_jobs.json
+
+---
+
+## **Concurrency and Synchronization**
+
+QueueCTL leverages Go’s concurrency model to efficiently manage multiple background workers.
+The system is fully thread-safe and optimized for simultaneous job execution.
+
+### **1. Goroutines**
+
+Each worker runs as an independent goroutine:
+
+```go
+go workerLoop(id)
 ```
+
+This enables multiple jobs to be processed concurrently while maintaining high responsiveness.
+For example, if three workers are started (`--count 3`), three goroutines execute jobs in parallel.
+
+**Advantages:**
+
+* Lightweight concurrency
+* Non-blocking job processing
+* Scalable parallelism across CPU cores
+
+---
+
+### **2. Mutex Locks (`sync.Mutex`)**
+
+A global mutex (`mu`) ensures that concurrent access to shared data (job queues and JSON files) is safe and consistent:
+
+```go
+mu.Lock()
+defer mu.Unlock()
+```
+
+Locks are used during:
+
+* Adding or removing jobs from `jobQueue`
+* Updating job states
+* Saving jobs to disk
+
+This prevents:
+
+* Race conditions
+* Data corruption
+* Inconsistent state writes
+
+---
+
+### **3. WaitGroups**
+
+A `sync.WaitGroup` tracks active worker goroutines and waits for them to complete gracefully during shutdown:
+
+```go
+wg.Add(1)
+defer wg.Done()
+```
+
+This ensures that the `queuectl exit` and `worker stop` commands will **cleanly terminate** all workers only after they finish their current tasks.
+
+---
+
+### **4. Graceful Shutdown**
+
+When users invoke:
+
+```bash
+./queuectl exit
+```
+
+All workers receive a signal through a `stopChan` channel:
+
+```go
+case <-stopChan:
+    fmt.Printf("Worker %d stopping.\n", id)
+```
+
+This guarantees:
+
+* No job is left in an inconsistent state
+* Workers finish their in-progress jobs
+* Persistent JSON files remain accurate and up to date
+
+---
+
+## **Assumptions & Trade-Offs**
+
+* Designed for simplicity — uses JSON file persistence instead of databases.
+* Worker concurrency handled via goroutines (thread-safe with locks).
+* No external dependencies — fully self-contained executable.
+* Platform-specific binaries provided (no Docker setup required).
 
 ---
 
