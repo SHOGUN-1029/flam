@@ -277,7 +277,9 @@ This design ensures:
    ```
 
    Then go to **Privacy and Security** and allow execution for queuectl.
-4. Run:
+   ![WhatsApp Image 2025-11-15 at 20 45 59_751fbf1c](https://github.com/user-attachments/assets/81f7e496-fb0e-4fcc-acf3-12aaed058f72)
+
+5. Run:
 
    ```bash
    ./queuectl enqueue "echo Hello"
@@ -286,7 +288,7 @@ This design ensures:
    ./queuectl status
    ./queuectl dlq list
    ```
-5. Verify:
+6. Verify:
 
    * Jobs are processed successfully.
    * Restarting the app preserves job history.
