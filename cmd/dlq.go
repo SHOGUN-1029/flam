@@ -19,8 +19,7 @@ var dlqListCmd = &cobra.Command{
 	Short: "List all jobs in the Dead Letter Queue",
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := LoadJobsFromDisk(); err != nil {
-			fmt.Println(" Failed to load jobs from disk:", err)
-
+			fmt.Println("Failed to load jobs from disk:", err)
 		}
 
 		mu.Lock()
@@ -29,11 +28,11 @@ var dlqListCmd = &cobra.Command{
 		mu.Unlock()
 
 		if len(dlqCopy) == 0 {
-			fmt.Println(" Dead Letter Queue is empty.")
+			fmt.Println("Dead Letter Queue is empty.")
 			return
 		}
 
-		fmt.Println(" Dead Letter Queue Jobs:")
+		fmt.Println("Dead Letter Queue Jobs:")
 		for _, job := range dlqCopy {
 			fmt.Printf("• ID: %d | Command: %s | Attempts: %d/%d | Last Updated: %s\n",
 				job.ID, job.Command, job.Attempts, job.MaxRetries, job.UpdatedAt.Format(time.RFC822))
@@ -49,18 +48,17 @@ var dlqRetryCmd = &cobra.Command{
 
 		jobID, err := strconv.ParseInt(args[0], 10, 64)
 		if err != nil {
-			fmt.Println(" Invalid job ID.")
+			fmt.Println("Invalid job ID.")
 			return
 		}
 
 		if err := LoadJobsFromDisk(); err != nil {
-			fmt.Println(" Failed to load jobs from disk:", err)
-
+			fmt.Println("Failed to load jobs from disk:", err)
 		}
 
-		// Critical section: locate job in DLQ and remove it, add to active queue.
+		// find and remove from DLQ, then requeue as pending
 		mu.Lock()
-		var idx = -1
+		idx := -1
 		for i, j := range deadLetterQueue {
 			if j.ID == jobID {
 				idx = i
@@ -70,25 +68,30 @@ var dlqRetryCmd = &cobra.Command{
 
 		if idx == -1 {
 			mu.Unlock()
-			fmt.Printf(" Job ID %d not found in DLQ.\n", jobID)
+			fmt.Printf("Job ID %d not found in DLQ.\n", jobID)
 			return
 		}
 
 		jobToRetry := deadLetterQueue[idx]
+		// remove from DLQ
 		deadLetterQueue = append(deadLetterQueue[:idx], deadLetterQueue[idx+1:]...)
 
+		// reset fields and add to active queue
 		jobToRetry.Status = "pending"
 		jobToRetry.Attempts = 0
 		jobToRetry.UpdatedAt = time.Now()
 		jobQueue = append(jobQueue, jobToRetry)
 
-		mu.Unlock()
-		if err := SaveJobsToDisk(); err != nil {
-			fmt.Println("️ Failed to persist queues after retry:", err)
+		// persist
+		if err := saveJobsToDiskLocked(); err != nil {
+			// unlock then report error
+			mu.Unlock()
+			fmt.Println("Failed to persist queues after retry:", err)
 			return
 		}
+		mu.Unlock()
 
-		fmt.Printf(" Job ID %d requeued successfully for processing.\n", jobID)
+		fmt.Printf("Job ID %d requeued successfully for processing.\n", jobID)
 	},
 }
 
