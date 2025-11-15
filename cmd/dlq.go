@@ -56,7 +56,7 @@ var dlqRetryCmd = &cobra.Command{
 			fmt.Println("Failed to load jobs from disk:", err)
 		}
 
-		// find and remove from DLQ, then requeue as pending
+		
 		mu.Lock()
 		idx := -1
 		for i, j := range deadLetterQueue {
@@ -73,18 +73,18 @@ var dlqRetryCmd = &cobra.Command{
 		}
 
 		jobToRetry := deadLetterQueue[idx]
-		// remove from DLQ
+		
 		deadLetterQueue = append(deadLetterQueue[:idx], deadLetterQueue[idx+1:]...)
 
-		// reset fields and add to active queue
+		
 		jobToRetry.Status = "pending"
 		jobToRetry.Attempts = 0
 		jobToRetry.UpdatedAt = time.Now()
 		jobQueue = append(jobQueue, jobToRetry)
 
-		// persist
+		
 		if err := saveJobsToDiskLocked(); err != nil {
-			// unlock then report error
+			
 			mu.Unlock()
 			fmt.Println("Failed to persist queues after retry:", err)
 			return
